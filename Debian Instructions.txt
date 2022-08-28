@@ -1,0 +1,405 @@
+
+Debian Post Install Instructions By: Matthew_Moore 
+
+( Based on Debian 11 KDE ) 
+_____________________________________________________________________________
+
+Add user to sudoers file. (Required for sudo )
+
+Enter root shell by typing SU In the Terminal/Konsole.
+
+Verify that sudo is installed:
+
+sudo apt install sudo
+
+Edit sudoers file:
+
+sudo nano /etc/sudoers
+
+Add your user below %sudo
+
+EXAMPLE:
+# Allow members of group sudo to execute any command
+%sudo	ALL=(ALL:ALL) ALL
+matt    ALL=(ALL:ALL) ALL
+______________________________________________________________________________
+
+Enable Contrib and Non-Free packages.
+
+Open main software properties menu using terminal/konsole:
+
+sudo software-properties-kde
+
+Enable all listed options containing | MAIN   CONTRIB   NON-FREE | 
+
+If you installed Debian from a pre-built ISO you may need to disabled the CDROM: Repository to avoid errors
+to do this use the "OTHER SOFTWARE" tab and make sure cdrom: is NOT checked. 
+
+To enable Update checking, go to the "UPDATES" tab and enable "Check for update". As well as any other update options you desire. 
+__
+
+Adding Backports Repository ( Optional )
+
+To install an application from the backports repository, you must first add the repository to your system. 
+
+sudo nano /etc/apt/sources.list
+
+Go to the end of the file and paste the below two lines:
+
+deb http://deb.debian.org/debian/ bullseye-backports main contrib non-free
+deb-src http://deb.debian.org/debian/ bullseye-backports main contrib non-free
+
+sudo apt update
+__
+
+To install an application from the backport repository, you must specify the source of the package in terminal/konsole. 
+
+EXAMPLE:
+sudo apt -t bullseye-backports install <package name>
+________________________________________________________________________________
+
+Enable 32bit package downloads. ( Required for some applications )
+
+sudo dpkg --add-architecture i386
+
+Refresh package index:
+
+sudo apt update
+______________________________________________________________________________
+
+Find fastest mirrors. ( Optional )
+
+install netselect-apt
+
+sudo apt install netselect-apt
+
+Run command:
+
+netselect-apt
+
+A list of mirrors ranked by speed will be places in your home directory
+Copy this list to  /etc/apt/sources.list
+
+Refresh package index:
+
+sudo apt-get update
+_____________________________________________________________________________
+
+Enable support for Snap and Flatpak packages in the Discover package manager:
+
+sudo apt install plasma-discover-backend-snap
+
+sudo apt install plasma-discover-backend-flatpak
+
+Add the Flathub Repository by typing the following in Terminal/konsole:
+
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+changes will take effect after rebooting the system
+_____________________________________________________________________________
+
+Basic Package Installers:
+
+sudo apt install synaptic
+
+for Gnome/GTK Desktops use gdebi:
+
+sudo apt install gdebi
+
+for KDE/QT Desktops use qapt installer:
+
+sudo apt install qapt-deb-installer
+
+sudo apt install qapt-utils
+_____________________________________________________________________________
+
+Install non-free codecs and other media components. ( Optional )
+
+NOTE: These must be installed seperatly to avoid errors / conflicts.
+
+sudo apt install ffmpeg
+
+sudo apt install libavcodec-extra
+
+sudo apt install ttf-mscorefonts-installer
+
+sudo apt install libdvdcss2
+
+sudo apt install libdvd-pkg
+
+sudo dpkg-reconfigure libdvd-pkg
+
+sudo apt install ffmpegthumbnailer
+
+sudo apt install ffmpegthumbs
+
+sudo apt install gstreamer1.0-plugins-bad
+
+sudo apt install gstreamer1.0-plugins-ugly
+
+sudo apt install gstreamer1.0-libav
+
+sudo apt install gstreamer1.0-tools
+
+sudo apt install gstreamer1.0-vaapi
+
+sudo apt install tumbler-plugins-extra
+
+sudo apt-get install kdegraphics-thumbnailers
+______________________________________________________________________________
+
+Install Linux Firmware and base packages:
+
+sudo apt install firmware-linux firmware-linux-nonfree firmware-misc-nonfree && sudo apt install linux-headers-$(uname -r) dkms
+______________________________________________________________________________
+
+Use the isenkram-cli package to auto-install missing firmware requested by Kernel
+
+sudo apt install isenkram-cli
+
+sudo isenkram-autoinstall-firmware
+______________________________________________________________________________
+
+Utility Applications:
+
+sudo apt install rar unrar p7zip-rar
+______________________________________________________________________________
+
+Fix QT Themeing on GTK based Desktops.
+
+sudo apt install qt5-style-plugins
+
+Run the following command to set the
+environment variable. 
+
+echo "export QT_QPA_PLATFORMTHEME=gtk2" >> ~/.profile
+
+Log out and back in, or reboot your machine for changes to take effect. 
+___________________________________________________________________________
+
+Install Nvidia Drivers.  ( Only use if you have Nvidia Hardware )
+
+sudo apt install nvidia-detect
+
+Run command:
+
+nvidia-detect
+
+Install the recommended driver shown
+
+Example:
+
+sudo apt install linux-headers-$(uname -r) nvidia-legacy-340xx-driver 
+
+Create an Xorg configuration for your gpu
+
+mkdir /etc/X11/xorg.conf.d
+
+nano /etc/X11/xorg.conf.d/20-nvidia.conf
+
+Now add below contents to the file and save
+
+Section "Device"
+Identifier "My GPU"
+Driver "nvidia"
+EndSection
+
+
+changes will take effect after rebooting the system.
+
+___________________________________________________________________________
+
+Install and enable "ALL" Wifi Functions for Broadcom WiFi. 
+
+The default non-free firmware only gives you basic functionality. To get the most out of your Brodcom WiFi chip, install the following firmware packages.  
+
+sudo apt install broadcom-sta-dkms broadcom-sta-common firmware-brcm80211
+
+changes will take effect after rebooting the system.
+__________________________________________________________________________
+
+Install Bluetooth packages. 
+
+sudo apt install bluetooth bluez bluez-firmware bluez-cups bluez-tools firmware-atheros firmware-iwlwifi pulseaudio-module-bluetooth pulseaudio-module-zeroconf
+
+changes will take effect after rebooting the system.
+__________________________________________________________________________
+
+Install Virt-Manager/QEMU Virtual Machine Manager
+
+Install on HOST:
+
+sudo apt install qemu qemu-system qemu-kvm libvirt-daemon libvirt-clients bridge-utils virt-manager libvirt-daemon-system virtinst qemu-utils virt-viewer spice-client-gtk gir1.2-spiceclientgtk-3.0 gir1.2-spiceclientglib-2.0 ebtables
+
+sudo virsh net-start default
+
+sudo virsh net-autostart default
+
+sudo modprobe vhost_net
+
+sudo usermod -G libvirt -a $USER
+
+sudo usermod -G kvm -a $USER
+
+Install on Linux GUEST:
+
+sudo apt install spice-vdagent xserver-xorg-video-qxl xserver-xspice libspice-protocol-dev qemu-guest-agent
+
+For Windows GUEST:
+
+install virtio-win-guest-tools.exe, virt-viewer, and UsbDk
+See the folliwing Documentation for instructions. 
+
+https://github.com/virtio-win/virtio-win-pkg-scripts/blob/master/README.md
+https://www.spice-space.org/download.html
+__________________________________________________________________________
+
+Installing Virtualbox on supported hardware: 
+
+sudo apt install gnupg2
+
+wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+
+wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+
+echo "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian bullseye contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
+
+sudo apt update
+
+sudo apt install linux-headers-$(uname -r) dkms
+
+sudo apt install virtualbox-6.1
+
+sudo gpasswd -a $USER vboxusers
+
+Download Guest Additions here: 
+https://www.virtualbox.org/wiki/Downloads
+__________________________________________________________________________
+
+Improve font rendering in Debian. ( Optional )
+
+Show hidden files in file manager.
+
+Create file /home/user/.fonts.conf
+
+Copy and paste the following text into file
+
+<?xml version='1.0'?>
+<!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
+<fontconfig>
+ <match target="font">
+  <edit mode="assign" name="rgba">
+   <const>rgb</const>
+  </edit>
+ </match>
+ <match target="font">
+  <edit mode="assign" name="hinting">
+   <bool>true</bool>
+  </edit>
+ </match>
+ <match target="font">
+  <edit mode="assign" name="hintstyle">
+   <const>hintslight</const>
+  </edit>
+ </match>
+ <match target="font">
+  <edit mode="assign" name="antialias">
+   <bool>true</bool>
+  </edit>
+ </match>
+  <match target="font">
+    <edit mode="assign" name="lcdfilter">
+      <const>lcddefault</const>
+    </edit>
+  </match>
+</fontconfig>
+
+changes will take effect after rebooting the system.
+__________________________________________________________________________
+
+Open KDE Settings as Root:
+
+pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY KDE_SESSION_VERSION=5 KDE_FULL_SESSION=true dbus-launch systemsettings5
+
+--------------------------------------------------------------------------
+
+Hide Partitions on Boot:  ( Optional )
+
+Create a new file /etc/udev/rules.d/99-hide-partitions.rules and add one line per partition you want to hide like so:
+( change "sda*" to match the partition you wish to hide )
+	
+KERNEL=="sda1",ENV{UDISKS_IGNORE}="1"
+KERNEL=="sda2",ENV{UDISKS_IGNORE}="1"
+
+You should be able to dynamically activate it as root:
+
+  # udevadm trigger --verbose
+_____________________________________________________________________________
+
+Install a Newer Kernel on Debian from Debian Backports repository. ( Optional )
+
+This is generally only recommended if you have issues with hardware compatibility with the default Debian kernel. Or require features or functionality not present in the default Debian kernel. 
+
+While Newer Kernels often contain Drivers for newer hardware as well as other improvements, adding a backported kernel to a fixed release distro such as Debian increases the risk for system instability and bugs.
+__
+
+To install an application from the backports repository, you must first add the repository to your system. 
+
+sudo nano /etc/apt/sources.list
+
+Go to the end of the file and paste the below two lines:
+
+deb http://deb.debian.org/debian/ bullseye-backports main contrib non-free
+deb-src http://deb.debian.org/debian/ bullseye-backports main contrib non-free
+
+sudo apt update
+__
+
+To install the latest backported kernel 
+
+sudo apt install -t bullseye-backports linux-image-amd64
+
+sudo apt install -t bullseye-backports firmware-linux firmware-linux-nonfree firmware-misc-nonfree
+
+Reboot your system for changes to take effect. 
+
+To display a list of all available kernels use aptitude search.
+
+aptitude search linux-image
+__
+
+To remove older unused kernels on your system run the following command 
+( Not recommended )
+
+sudo apt-get remove $(dpkg -l|egrep '^ii  linux-(im|he)'|awk '{print $2}'|grep -v `uname -r`) && sudo apt autoremove
+
+_____________________________________________________________________________
+_____________________________________________________________________________
+
+Backup / Restore installed APT packages
+
+# Backup your packages list to your home directory
+# Get a packages list
+dpkg --get-selections > ~/Package.list
+
+# Copy list of repositories to your home directory
+sudo cp /etc/apt/sources.list ~/sources.list
+
+# Export repo keys to your home directory
+sudo apt-key exportall > ~/Repo.keys
+
+# Restore packages from your home directory
+sudo apt-key add ~/Repo.keys
+sudo cp ~/sources.list /etc/apt/sources.list
+sudo dpkg --add-architecture i386 
+sudo apt-get update
+sudo apt-get install dselect
+sudo apt-get install $(cat ~/Package.list | awk '{print $1}')
+
+#NOTE: if SUDO is not configured, Simply use root terminal or SU. 
+
+#CRITICAL: Any packages installed using a .DEB file or other source not
+included in your repositories/sources.list, must be removed from Package.list before restoring to avoid errors. These packages will need to be reinstalled manually. 
+
+
+

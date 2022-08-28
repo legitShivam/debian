@@ -1,0 +1,6 @@
+# implement whiptail integration
+# integrate wsl and baremetal debian scripts
+# bat configurations
+# application list
+python-is-python3
+conda
