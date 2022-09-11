@@ -2,7 +2,7 @@
 # Initialising variables
 . ../../assets/variables.sh
 
-dependencies=(git zsh)
+dependencies="git zsh"
 sudo $package_manager install $dependencies -y # installing zsh and git
 
 # installing ohmyzsh
