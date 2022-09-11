@@ -8,7 +8,8 @@ echo
 echo "-------------------------------- Installing tools --------------------------------"
 echo
 
-tools="xclip ranger curl wget git zsh htop neofetch micro bat lolcat peco build-essential gdb nodejs npm zoxide exa resolvconf gdebi fzf"
+tools="xclip ranger curl wget git zsh htop neofetch micro bat lolcat peco build-essential gdb nodejs npm exa resolvconf gdebi fzf"
+tools_cargo="zoxide"
 sudo $package_manager install $tools -y
 
 # tldr++
@@ -24,6 +25,11 @@ sudo $package_manager install $coding -y
 
 wget -o github-desktop.deb -q --show-progress https://github.com/shiftkey/desktop/releases/download/release-2.9.0-linux2/GitHubDesktop-linux-2.9.0-linux2.deb
 sudo dpkg -i ./github-desktop.deb
+
+# rust
+curl https://sh.rustup.rs -sSf | sh
+
+cargo install $tools_cargo
 
 # Figma
 flatpak install flathub io.github.Figma_Linux.figma_linux # To install figma from flathub
